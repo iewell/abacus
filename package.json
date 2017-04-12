@@ -1,0 +1,9 @@
+{
+  "name": "abacus",
+  "version": "0.0.1",
+  "description": "Handwritten documents to LaTeX",
+  "main": "index.js",
+  "repository": "https://github.com/iewell/abacus.git",
+  "author": "Team 7147",
+  "license": "TBD"
+}
