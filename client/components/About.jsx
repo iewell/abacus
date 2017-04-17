@@ -5,7 +5,7 @@ import Jumbotron from 'react-bootstrap/lib/Jumbotron';
 export default class About extends React.Component {
     render() {
         var center = {
-            "text-align": "center"
+            "textAlign": "center"
         };
 
         return (

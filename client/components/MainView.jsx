@@ -9,20 +9,30 @@ import Row from 'react-bootstrap/lib/Row'
 import Col from 'react-bootstrap/lib/Col'
 
 export default class MainView extends React.Component {
-  render() {
-    const style = {
-        "padding-top": "100"
-    };
-    return (
-        <div style={style}>
-        <Grid>
-            <Row>
-                <Col md={6} mdPush={6}><Preview /></Col>
-                <Col md={6} mdPull={6}><Upload /></Col>
-            </Row>
-        </Grid>
-        </div>
-     );
-  }
+    constructor(props) {
+        super(props);
+        this.state = {convert: "false"};
+        this.convert = this.convert.bind(this);
+    }
+
+    convert() {
+        this.setState({convert: "true"})
+    }
+
+    render() {
+        const style = {
+            "paddingTop": "100"
+        };
+        return (
+            <div style={style}>
+            <Grid>
+                <Row>
+                    <Col md={6} mdPush={6}><Preview convert={this.state.convert} /></Col>
+                    <Col md={6} mdPull={6}><Upload onConvert={() => this.convert()}/></Col>
+                </Row>
+            </Grid>
+            </div>
+        );
+    }
 }
 

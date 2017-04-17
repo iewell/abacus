@@ -5,13 +5,18 @@ import React from 'react';
 import Jumbotron from 'react-bootstrap/lib/Jumbotron';
 import Button from 'react-bootstrap/lib/Button';
 
+import DragBox from './DragBox.jsx'
+
 export default class Upload extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {imageFile: ''};
+        this.props = props;
+        this.state = {imageFile: '', boxes: []};
 
         this.handleFile = this.handleFile.bind(this);
         this.uploadClicked = this.uploadClicked.bind(this);
+        this.handleImageClick = this.handleImageClick.bind(this);
+        this.imageDrag = this.imageDrag.bind(this);
     }
 
     handleFile(event) {
@@ -29,24 +34,44 @@ export default class Upload extends React.Component {
             fileElem.click();
         }
     }
+    
+    imageDrag(event) {
+        event.preventDefault();
+        var boxArray = this.state.boxes;
+        var boxidx = this.state.boxes.length - 1;
+        var boxX = boxArray[boxidx].x;
+        var boxY = boxArray[boxidx].y;
+        boxArray[boxidx].width = event.pageX - boxX;
+        boxArray[boxidx].height = event.pageY - boxY;
+        this.setState({boxes: boxArray});
+    }
+    
+    handleImageClick(event) {
+        var dragIcon = document.createElement('img');
+        dragIcon.src = "blank.png";
+        event.dataTransfer.setDragImage(dragIcon, -5, -5);
+        var box = Object();
+        box.x = event.pageX;
+        box.y = event.pageY;
+        box.width = 1;
+        box.height = 1;
+        var boxArray = this.state.boxes;
+        box.number = this.state.boxes.length + 1;
+        boxArray.push(box);
+        this.setState({boxes: boxArray});
+    }
 
     render() {
         var container_style = {
-            "width": "450",
-            "height": "450",
+            "width": "530",
+            "height": "550",
             "position": "relative",
-            "marginLeft": "0",
-            "marginRight": "0",
-            "marginTop": "0"
         };
 
         var convert_container_style = {
-            "width": "450",
-            "height": "200",
+            "width": "500",
+            "height": "80",
             "position": "relative",
-            "marginLeft": "0",
-            "marginRight": "0",
-            "marginTop": "0",
             "textAlign": "center"
         };
 
@@ -78,17 +103,21 @@ export default class Upload extends React.Component {
             var reader = new FileReader();
             reader.onload = (function() { return function(e) { document.getElementById("thumbnail").src = e.target.result; }; })();
             reader.readAsDataURL(this.state.imageFile);
+            console.log("rerender");
+            var boxes = this.state.boxes.map((box) =>
+                <DragBox x={box.x} y={box.y} width={box.width} height={box.height} number={box.number} />)
             return (
-                <div className="container">
+                <div>
                 <Jumbotron style={container_style}>
-                <div style={image_style}>
-                    <img src="" id="thumbnail" style={image_style}/>
+                <div style={image_style} draggable="true" onDragStart={this.handleImageClick} onDrag={this.imageDrag}>
+                    <img src="" id="thumbnail" style={image_style} draggable="false" />
                 </div>
+                {boxes}
                 </Jumbotron>
                 <div style={convert_container_style}>
                     <h4>Select the document sections to be converted.</h4>
                     <div style={button_container}>
-                    <Button bsStyle="primary" bsSize="large" block>Convert</Button>
+                    <Button bsStyle="primary" bsSize="large" block onClick={this.props.onConvert}>Convert</Button>
                     </div>
                 </div>
                 </div>
